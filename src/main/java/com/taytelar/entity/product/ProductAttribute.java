@@ -14,6 +14,7 @@ public class ProductAttribute {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "productAttributeId")
     private Long productAttributeId;
 
     @Enumerated(EnumType.STRING)
@@ -23,6 +24,8 @@ public class ProductAttribute {
     @Column(name = "value", nullable = false)
     private String value;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+
 }

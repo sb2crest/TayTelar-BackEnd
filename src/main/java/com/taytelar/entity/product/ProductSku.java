@@ -13,6 +13,7 @@ public class ProductSku {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "productSkuId")
     private Long productSkuId;
 
     @Column(name = "sku")
