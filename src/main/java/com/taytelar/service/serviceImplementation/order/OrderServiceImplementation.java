@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,7 +61,7 @@ public class OrderServiceImplementation implements OrderService {
             log.error(Constants.USER_NOT_FOUND + ": {}", e.getMessage());
             throw e;
         }catch (Exception e) {
-            log.error("Exception: {}", e.getMessage());
+            log.error("OrderServiceImplementation, PlaceAnOrder, Exception: {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
