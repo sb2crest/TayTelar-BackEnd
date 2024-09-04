@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity,String> {
-    @Query("SELECT o FROM OrderEntity o WHERE o.orderId = : orderId")
     OrderEntity findByOrderId(String orderId);
 }

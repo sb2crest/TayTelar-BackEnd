@@ -20,6 +20,18 @@ public class OrderController {
 
     private final OrderService orderService;
 
+
+    /**
+     * Places an order based on the provided order request.
+     *
+     * This API endpoint processes an order request and returns the details
+     * of the placed order. It expects a valid OrderRequest object in the request body.
+     * If the order is successfully placed, it returns a PlaceAnOrderResponse with
+     * the details of the order.
+     *
+     * @param  orderRequest The request object containing order details.
+     * @return A ResponseEntity containing the PlaceAnOrderResponse with the status code.
+     */
     @PostMapping("/placeAnOrder")
     public ResponseEntity<PlaceAnOrderResponse> placeAnOrder(@Valid @RequestBody OrderRequest orderRequest) {
         PlaceAnOrderResponse placeAnOrderResponse = orderService.placeAnOrder(orderRequest);

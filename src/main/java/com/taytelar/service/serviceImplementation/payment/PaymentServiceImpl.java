@@ -96,6 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
             response.setRazorPayOrderId(razorpayOrderId);
             response.setPaymentDate(localDateFormat.format(paymentEntity.getPaymentDate()));
         } catch (RazorpayException e) {
+            log.error("While initiating the payment RazorPayException occurs: {}", e.getMessage());
             response.setStatus(Constants.ERROR);
             response.setMessage(Constants.ERROR_MESSAGE + e.getMessage());
         }
@@ -127,7 +128,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     public ResponseEntity<SuccessResponse> verifyRazorpaySignature(PaymentData paymentData) {
         String generatedSignature = generateRazorpaySignature(paymentData.getRazorPayOrderId(), paymentData.getRazorPayPaymentId(), keySecret);
-        PaymentEntity paymentEntity = paymentRepository.findBookingIdByRazorPayOrderId(paymentData.getRazorPayOrderId());
+        PaymentEntity paymentEntity = paymentRepository.findByRazorPayOrderId(paymentData.getRazorPayOrderId());
         OrderEntity orderEntity = orderRepository.findByOrderId(paymentData.getOrderId());
 
         SuccessResponse successResponse = new SuccessResponse();

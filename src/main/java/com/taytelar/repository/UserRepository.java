@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public interface UserRepository extends JpaRepository<UserEntity,String> {
-    @Query("select u from UserEntity u where u.userId = :userId")
     UserEntity findUserByUserId(String userId);
 
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,26 +59,28 @@ public class OrderServiceImplementation implements OrderService {
             return placeAnOrderResponse;
 
         } catch (UserNotFoundException e) {
+            log.error(Constants.USER_NOT_FOUND + ": {}", e.getMessage());
             throw e;
         }catch (Exception e) {
+            log.error("Exception: {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
 
     private List<OrderItemEntity> getNewOrderItemEntities(List<OrderItemRequest> orderItemRequests, OrderEntity orderEntity) {
-        List<OrderItemEntity> orderItemEntities = new ArrayList<>();
-        for (OrderItemRequest itemRequest : orderItemRequests) {
-            OrderItemEntity orderItemEntity = new OrderItemEntity();
-            orderItemEntity.setOrderItemId(generator.generateId(Constants.ORDER_ITEM_ID));
-            orderItemEntity.setProductId(itemRequest.getProductId());
-            orderItemEntity.setQuantity(itemRequest.getQuantity());
-            orderItemEntity.setUnitPrice(itemRequest.getTotalAmount()/ itemRequest.getQuantity());
-            orderItemEntity.setTotalAmount(itemRequest.getTotalAmount());
-            orderItemEntity.setOrderEntity(orderEntity);
-            orderItemEntity.setReturnDaysPolicy(Constants.RETURN_DAYS_POLICY);
-            orderItemEntities.add(orderItemEntity);
-        }
-        return orderItemEntities;
+        return orderItemRequests.stream()
+                .map(itemRequest -> {
+                    OrderItemEntity orderItemEntity = new OrderItemEntity();
+                    orderItemEntity.setOrderItemId(generator.generateId(Constants.ORDER_ITEM_ID));
+                    orderItemEntity.setProductId(itemRequest.getProductId());
+                    orderItemEntity.setQuantity(itemRequest.getQuantity());
+                    orderItemEntity.setUnitPrice(itemRequest.getTotalAmount() / itemRequest.getQuantity());
+                    orderItemEntity.setTotalAmount(itemRequest.getTotalAmount());
+                    orderItemEntity.setOrderEntity(orderEntity);
+                    orderItemEntity.setReturnDaysPolicy(Constants.RETURN_DAYS_POLICY);
+                    return orderItemEntity;
+                })
+                .collect(Collectors.toList());
     }
 
     private OrderEntity getNewOrderEntity(OrderRequest orderRequest, UserEntity userEntity) {
