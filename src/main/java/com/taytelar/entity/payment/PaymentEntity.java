@@ -25,10 +25,10 @@ public class PaymentEntity {
     @Column(name = "user_id",nullable = false)
     private String userId;
 
-    @Column(name = "razorpay_order_id", nullable = false)
+    @Column(name = "razorpay_order_id")
     private String razorPayOrderId;
 
-    @Column(name = "razorpay_payment_id", nullable = false)
+    @Column(name = "razorpay_payment_id")
     private String razorPayPaymentId;
 
     @Enumerated(EnumType.STRING)
@@ -45,6 +45,6 @@ public class PaymentEntity {
     private String paymentMethod;
 
     @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     private OrderEntity orderEntity;
 }

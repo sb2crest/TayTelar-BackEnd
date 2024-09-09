@@ -1,7 +1,6 @@
 package com.taytelar.controller;
 
 import com.taytelar.request.order.OrderRequest;
-import com.taytelar.response.SuccessResponse;
 import com.taytelar.response.order.PlaceAnOrderResponse;
 import com.taytelar.service.service.order.OrderService;
 import jakarta.validation.Valid;

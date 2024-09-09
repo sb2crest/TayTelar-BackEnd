@@ -1,6 +1,8 @@
 package com.taytelar.exception;
 
+import com.taytelar.exception.cart.CartItemNotFoundException;
 import com.taytelar.exception.order.OrderNotFoundException;
+import com.taytelar.exception.user.UserDetailsMissMatchException;
 import com.taytelar.exception.user.UserNotFoundException;
 import com.taytelar.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrderNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleOrderNotFoundException(OrderNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+    }
+
+    @ExceptionHandler(UserDetailsMissMatchException.class)
+    public ResponseEntity<ErrorResponse> handleUserDetailsMissMatchException(UserDetailsMissMatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCartItemNotFoundException(CartItemNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
     }
 

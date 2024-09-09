@@ -22,10 +22,13 @@ public class UserRequest {
     private String emailAddress;
 
     @NotBlank(message = "Phone number is mandatory")
-    @Pattern(regexp = "\\+?[0-9]{10,15}", message = "Phone number should be valid")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
     private String phoneNumber;
 
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, message = "Password should be at least 6 characters long")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!_-])[A-Za-z\\d@#$%^&+=!_-]{8,}$",
+            message = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
     private String password;
 }

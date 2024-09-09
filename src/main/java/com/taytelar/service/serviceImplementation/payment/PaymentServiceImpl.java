@@ -67,38 +67,61 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         OrderEntity orderEntity = orderRepository.findByOrderId(paymentRequest.getOrderId());
-        if(orderEntity == null){
+        if (orderEntity == null) {
             throw new OrderNotFoundException(Constants.ORDER_NOT_FOUND);
         }
 
-        try {
+        if (paymentRequest.getPaymentMethod().equalsIgnoreCase(Constants.COD)) {
 
-            RazorpayClient razorPayClient = new RazorpayClient(keyID, keySecret);
-
-            JSONObject orderRequest = new JSONObject();
-            orderRequest.put("amount", paymentRequest.getTotalAmount() * 100);
-            orderRequest.put("currency", "INR");
-            orderRequest.put("receipt", "payment_receipt_" + System.currentTimeMillis());
-
-            Order razorpayOrder = razorPayClient.orders.create(orderRequest);
-            String razorpayOrderId = razorpayOrder.get("id");
 
             PaymentEntity paymentEntity = new PaymentEntity();
-            paymentEntity.setRazorPayOrderId(razorpayOrderId);
+            // payment id is for us reference
+            paymentEntity.setPaymentId(generator.generateId(Constants.PAYMENT_ID));
             paymentEntity.setTotalAmount(paymentRequest.getTotalAmount());
             paymentEntity.setPaymentDate(LocalDateTime.now());
             paymentEntity.setUserId(paymentRequest.getUserId());
             paymentEntity.setPaymentMethod(paymentRequest.getPaymentMethod());
+            paymentEntity.setPaymentStatus(PaymentStatus.PENDING);
+            paymentEntity.setOrderEntity(orderEntity);
             paymentRepository.save(paymentEntity);
 
             response.setStatus(Constants.SUCCESS);
-            response.setMessage(Constants.PAYMENT_CREATED_SUCCESSFULLY);
-            response.setRazorPayOrderId(razorpayOrderId);
+            response.setMessage(Constants.ORDER_PLACED_SUCCESSFULLY);
             response.setPaymentDate(localDateFormat.format(paymentEntity.getPaymentDate()));
-        } catch (RazorpayException e) {
-            log.error("While initiating the payment RazorPayException occurs: {}", e.getMessage());
-            response.setStatus(Constants.ERROR);
-            response.setMessage(Constants.ERROR_MESSAGE + e.getMessage());
+        } else {
+
+            try {
+
+                RazorpayClient razorPayClient = new RazorpayClient(keyID, keySecret);
+
+                JSONObject orderRequest = new JSONObject();
+                orderRequest.put("amount", paymentRequest.getTotalAmount() * 100);
+                orderRequest.put("currency", "INR");
+                orderRequest.put("receipt", "payment_receipt_" + System.currentTimeMillis());
+
+                Order razorpayOrder = razorPayClient.orders.create(orderRequest);
+                String razorpayOrderId = razorpayOrder.get("id");
+
+                PaymentEntity paymentEntity = new PaymentEntity();
+                // payment id is for us reference
+                paymentEntity.setPaymentId(generator.generateId(Constants.PAYMENT_ID));
+                paymentEntity.setRazorPayOrderId(razorpayOrderId);
+                paymentEntity.setTotalAmount(paymentRequest.getTotalAmount());
+                paymentEntity.setPaymentDate(LocalDateTime.now());
+                paymentEntity.setUserId(paymentRequest.getUserId());
+                paymentEntity.setPaymentMethod(paymentRequest.getPaymentMethod());
+                paymentEntity.setPaymentStatus(PaymentStatus.PENDING);
+                paymentRepository.save(paymentEntity);
+
+                response.setStatus(Constants.SUCCESS);
+                response.setMessage(Constants.PAYMENT_CREATED_SUCCESSFULLY);
+                response.setRazorPayOrderId(razorpayOrderId);
+                response.setPaymentDate(localDateFormat.format(paymentEntity.getPaymentDate()));
+            } catch (RazorpayException e) {
+                log.error("While initiating the payment RazorPayException occurs: {}", e.getMessage());
+                response.setStatus(Constants.ERROR);
+                response.setMessage(Constants.ERROR_MESSAGE + e.getMessage());
+            }
         }
 
         return response;
@@ -137,8 +160,6 @@ public class PaymentServiceImpl implements PaymentService {
             orderEntity.setOrderStatus(OrderStatus.CONFIRMED);
             orderRepository.save(orderEntity);
 
-            // payment id is for us reference
-            paymentEntity.setPaymentId(generator.generateId(Constants.PAYMENT_ID));
             paymentEntity.setRazorPayPaymentId(paymentData.getRazorPayPaymentId());
             paymentEntity.setPaymentStatus(PaymentStatus.SUCCESS);
             paymentEntity.setOrderEntity(orderEntity);
