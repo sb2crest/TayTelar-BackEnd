@@ -12,7 +12,4 @@ public class PaymentData {
     private String razorPayPaymentId;
 
     private String razorPaySignature;
-
-    private String paymentStatus;
-
 }

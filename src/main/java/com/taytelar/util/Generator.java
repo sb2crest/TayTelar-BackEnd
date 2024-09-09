@@ -13,6 +13,7 @@ public class Generator {
             case Constants.ORDER_ID -> numericUUID.substring(0, 10);
             case Constants.ORDER_ITEM_ID -> numericUUID.substring(0, 8);
             case Constants.PAYMENT_ID -> numericUUID.substring(0, 12);
+            case Constants.USER_ID, Constants.CART_ID, Constants.CART_ITEM_ID -> numericUUID.substring(0, 6);
             case null, default -> numericUUID;
         };
 

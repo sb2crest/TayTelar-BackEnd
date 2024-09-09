@@ -6,6 +6,7 @@ import com.taytelar.request.order.OrderRequest;
 import com.taytelar.response.SuccessResponse;
 import com.taytelar.response.order.PlaceAnOrderResponse;
 import com.taytelar.service.service.order.OrderService;
+import com.taytelar.util.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OrderControllerTest {
 
     @MockBean
-    private OrderService orderService;
+    public OrderService orderService;
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    public WebApplicationContext webApplicationContext;
     @Autowired
     private MockMvc mockMvc;
 
@@ -69,7 +70,7 @@ class OrderControllerTest {
         orderRequest.setUserId("USER1");
         orderRequest.setTotalAmount(200.00);
         orderRequest.setOrderItemRequests(getOrderItemRequests());
-        orderRequest.setPaymentMethod("Cash On Delivery");
+        orderRequest.setPaymentMethod(Constants.COD);
         return orderRequest;
     }
 

@@ -6,6 +6,7 @@ import com.taytelar.response.SuccessResponse;
 import com.taytelar.response.payment.PaymentData;
 import com.taytelar.response.payment.PaymentResponse;
 import com.taytelar.service.service.payment.PaymentService;
+import com.taytelar.util.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,11 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PaymentController.class)
 class PaymentControllerTest {
 
-   @MockBean
-   private PaymentService paymentService;
+    @MockBean
+    public PaymentService paymentService;
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    public WebApplicationContext webApplicationContext;
 
     @Autowired
     private MockMvc mvc;
@@ -71,12 +72,14 @@ class PaymentControllerTest {
     private PaymentRequest getPaymentPojo() {
         PaymentRequest paymentDto = new PaymentRequest();
         paymentDto.setUserId("NB34ye");
+        paymentDto.setOrderId("ORDER_123");
         paymentDto.setTotalAmount(400.00);
+        paymentDto.setPaymentMethod(Constants.COD);
         return paymentDto;
     }
 
-    private PaymentData getPaymentData(){
-        PaymentData  paymentData = new PaymentData();
+    private PaymentData getPaymentData() {
+        PaymentData paymentData = new PaymentData();
         paymentData.setRazorPayOrderId("abc");
         paymentData.setRazorPayPaymentId("abd");
         paymentData.setRazorPayPaymentId("xyz");
