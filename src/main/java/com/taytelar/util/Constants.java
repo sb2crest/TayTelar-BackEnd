@@ -17,7 +17,7 @@ public class Constants {
     public static final String ERROR_MESSAGE = "Error creating Razorpay order: ";
     public static final String USER_ID = "UID";
     public static final String REGISTER_SUCCESS = "Registration Successful";
-    public static final String USER_DETAILS_MISS_MATCH = "The provided email or phone number does not match with the provided password";
+    public static final String USER_DETAILS_MISS_MATCH = "The provided phone number does not match with the provided phone number for otp";
     public static final String LOGIN_SUCCESS = "Login successful";
     public static final String CART_ID = "CID";
     public static final String ADDED_TO_CART_SUCCESSFULLY = "Added to Cart Successfully";
@@ -26,4 +26,11 @@ public class Constants {
     public static final String CART_NOT_FOUND = "Cart not found for user";
     public static final String CART_ITEM_DELETED = "Cart Item Deleted Successfully";
     public static final String USER_ID_CAN_NOT_NULL_OR_EMPTY = "UserId can't be null or empty";
+    public static final String AFFILIATE_USER_ID = "AID";
+    public static final String FAILED_TO_SEND_OTP = "Failed to send otp at this moment, pls try again later";
+    public static final String OTP_VERIFIED_SUCCESSFULLY = "Otp verified successfully";
+    public static final String OTP_VERIFIED_FAILED = "Otp verified failed";
+    public static final String INVALID_REFERRAL_CODE = "The provided referral code is InvalidReferralCode";
+    public static final String OTP_FAILED = "Failed to send OTP";
+    public static final String OTP_SUCCESS = "OTP sent successfully";
 }

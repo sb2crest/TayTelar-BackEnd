@@ -25,10 +25,12 @@ public class UserRequest {
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
     private String phoneNumber;
 
-    @NotBlank(message = "Password is mandatory")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!_-])[A-Za-z\\d@#$%^&+=!_-]{8,}$",
-            message = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    )
-    private String password;
+    @NotBlank(message = "User Type cannot be null or empty")
+    @Pattern(regexp = "customer|affiliate", message = "User Type must be either 'customer' or 'affiliate'")
+    private String userType;
+
+    @Pattern(regexp = "^$|^[A-Z0-9]{6}$", message = "Referral code must be 6 uppercase alphanumeric characters or empty")
+    @Size(max = 6, message = "Referral code cannot exceed 6 characters")
+    private String referralCode;
+
 }

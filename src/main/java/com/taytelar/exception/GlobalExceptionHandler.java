@@ -1,5 +1,6 @@
 package com.taytelar.exception;
 
+import com.taytelar.exception.affiliate.FailedToSendOtpException;
 import com.taytelar.exception.cart.CartItemNotFoundException;
 import com.taytelar.exception.order.OrderNotFoundException;
 import com.taytelar.exception.user.UserDetailsMissMatchException;
@@ -37,6 +38,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CartItemNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCartItemNotFoundException(CartItemNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+    }
+
+    @ExceptionHandler(FailedToSendOtpException.class)
+    public ResponseEntity<ErrorResponse> handleFailedToSendOtpException(FailedToSendOtpException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

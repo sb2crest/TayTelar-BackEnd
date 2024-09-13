@@ -5,30 +5,30 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "admin_data")
 @Getter
 @Setter
 public class AdminEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "adminId")
-    private Long adminId;
+    @Column(name = "admin_id", nullable = false)
+    private String adminId;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "email_address", nullable = false)
+    private String emailAddress;
 
-    @Column(name = "password")
+    @Column(name = "password",nullable = false)
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     private String role;
 }

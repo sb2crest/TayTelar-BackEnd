@@ -1,7 +1,9 @@
 package com.taytelar.controller;
 
-import com.taytelar.request.user.LoginRequest;
+import com.taytelar.request.user.OTPRequest;
+import com.taytelar.request.user.ValidateOTP;
 import com.taytelar.request.user.UserRequest;
+import com.taytelar.response.user.OTPResponse;
 import com.taytelar.response.user.RegisterResponse;
 import com.taytelar.service.service.user.UserService;
 import jakarta.validation.Valid;
@@ -32,15 +34,29 @@ public class UserController {
 
 
     /**
-     * Endpoint for user login.
+     * Endpoint for OTP verification.
      *
-     * @param loginRequest The login request object containing the user's email address or phone number and password.
-     * @return A ResponseEntity containing the RegisterResponse object and HTTP status 200 (OK) if login is successful.
-     * @throws com.taytelar.exception.user.UserDetailsMissMatchException If the provided credentials do not match any user.
+     * @param validateOTP The request object containing phone number and the OTP entered by the user.
+     *                    It is validated using @Valid to ensure the phone number and OTP are provided correctly.
+     * @return A ResponseEntity containing the OTPResponse object and HTTP status 200 (OK) if OTP verification is successful.
+     *         If the OTP verification fails, an appropriate error response will be returned.
      */
-    @PostMapping("/login")
-    public ResponseEntity<RegisterResponse> login(@Valid @RequestBody LoginRequest loginRequest){
-        RegisterResponse registerResponse = userService.login(loginRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(registerResponse);
+    @PostMapping("/verifyOtp")
+    public ResponseEntity<OTPResponse> verifyOtp(@Valid @RequestBody ValidateOTP validateOTP){
+        OTPResponse response = userService.verifyOtp(validateOTP);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * Endpoint to generate an OTP and send it to the user's phone number.
+     *
+     * @param otpRequest The phone number for which the OTP should be generated. It must not be blank.
+     * @return A ResponseEntity containing the OTPResponse object and HTTP status 200 (OK) if OTP generation is successful.
+     *         This response object typically contains the message indicating that the OTP has been sent.
+     */
+    @PostMapping("/sendOtp")
+    public  ResponseEntity<OTPResponse> generateOtp(@Valid @RequestBody OTPRequest otpRequest) {
+        OTPResponse response = userService.generateOtp(otpRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
