@@ -33,12 +33,6 @@ public class UserEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "otp_password")
-    private String otpPassword;
-
-    @Column(name = "otp_verified")
-    private boolean otpVerified;
-
     @Column(name = "referralCode")
     private String referralCode;
 

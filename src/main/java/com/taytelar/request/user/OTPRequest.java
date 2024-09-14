@@ -18,4 +18,8 @@ public class OTPRequest {
     @NotBlank(message = "User Type cannot be null or empty")
     @Pattern(regexp = "customer|affiliate", message = "User Type must be either 'customer' or 'affiliate'")
     private String userType;
+
+    @NotBlank(message = "Request Type cannot be null or empty")
+    @Pattern(regexp = "login|register", message = "Request Type must be either 'login' or 'register'")
+    private String requestType;
 }

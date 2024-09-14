@@ -36,12 +36,6 @@ public class AffiliateUserEntity {
     @Field(name = "phone_number")
     private String phoneNumber;
 
-    @Field(name = "otp_password")
-    private String otpPassword;
-
-    @Field(name = "otp_verified")
-    private boolean otpVerified;
-
     @Field(name = "referral_code")
     private String referralCode;
 

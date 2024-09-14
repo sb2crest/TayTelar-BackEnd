@@ -3,6 +3,9 @@ package com.taytelar.exception;
 import com.taytelar.exception.affiliate.FailedToSendOtpException;
 import com.taytelar.exception.cart.CartItemNotFoundException;
 import com.taytelar.exception.order.OrderNotFoundException;
+import com.taytelar.exception.otp.OtpNotFoundException;
+import com.taytelar.exception.otp.UnknownUserTypeException;
+import com.taytelar.exception.user.UserAccountAlreadyExistException;
 import com.taytelar.exception.user.UserDetailsMissMatchException;
 import com.taytelar.exception.user.UserNotFoundException;
 import com.taytelar.response.ErrorResponse;
@@ -43,6 +46,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FailedToSendOtpException.class)
     public ResponseEntity<ErrorResponse> handleFailedToSendOtpException(FailedToSendOtpException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+
+    @ExceptionHandler(OtpNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOtpNotFoundException(OtpNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+    }
+
+    @ExceptionHandler(UnknownUserTypeException.class)
+    public ResponseEntity<ErrorResponse> handleUnknownUserTypeException(UnknownUserTypeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @ExceptionHandler(UserAccountAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleUserAccountAlreadyExistException(UserAccountAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
