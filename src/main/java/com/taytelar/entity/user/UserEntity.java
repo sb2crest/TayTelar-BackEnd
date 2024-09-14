@@ -33,6 +33,9 @@ public class UserEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "phone_number_verified")
+    private boolean phoneNumberVerified;
+
     @Column(name = "referralCode")
     private String referralCode;
 

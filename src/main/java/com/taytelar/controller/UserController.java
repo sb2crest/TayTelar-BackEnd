@@ -1,6 +1,8 @@
 package com.taytelar.controller;
 
+import com.taytelar.request.user.LoginRequest;
 import com.taytelar.request.user.UserRequest;
+import com.taytelar.response.user.LoginResponse;
 import com.taytelar.response.user.RegisterResponse;
 import com.taytelar.service.service.user.UserService;
 import jakarta.validation.Valid;
@@ -27,5 +29,11 @@ public class UserController {
     public ResponseEntity<RegisterResponse> userRegister(@Valid @RequestBody UserRequest userRequest){
         RegisterResponse registerResponse = userService.register(userRequest);
         return ResponseEntity.status(HttpStatus.OK).body(registerResponse);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        LoginResponse loginResponse = userService.login(loginRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
     }
 }

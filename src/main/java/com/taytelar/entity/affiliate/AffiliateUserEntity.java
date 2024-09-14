@@ -36,6 +36,9 @@ public class AffiliateUserEntity {
     @Field(name = "phone_number")
     private String phoneNumber;
 
+    @Field(name = "phone_number_verified")
+    private boolean phoneNumberVerified;
+
     @Field(name = "referral_code")
     private String referralCode;
 

@@ -1,4 +1,4 @@
-package com.taytelar.request.user;
+package com.taytelar.request.otp;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

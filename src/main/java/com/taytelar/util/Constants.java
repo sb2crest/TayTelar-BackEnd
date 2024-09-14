@@ -24,7 +24,7 @@ public class Constants {
     public static final String PAYMENT_CREATED_SUCCESSFULLY = "Payment created successfully";
     public static final String ERROR_MESSAGE = "Error creating Razorpay order: ";
     public static final String REGISTER_SUCCESS = "Registration Successful";
-    public static final String USER_DETAILS_MISS_MATCH = "The provided phone number does not match with the provided phone number for otp or";
+    public static final String USER_DETAILS_MISS_MATCH = "The provided phone number does not match with the provided phone number for otp or ";
     public static final String ADDED_TO_CART_SUCCESSFULLY = "Added to Cart Successfully";
     public static final String CART_ITEM_UPDATE = "Cart Item Updated Successfully";
     public static final String CART_NOT_FOUND = "Cart not found for user";

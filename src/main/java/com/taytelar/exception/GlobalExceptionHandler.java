@@ -6,6 +6,7 @@ import com.taytelar.exception.order.OrderNotFoundException;
 import com.taytelar.exception.otp.OtpNotFoundException;
 import com.taytelar.exception.otp.UnknownUserTypeException;
 import com.taytelar.exception.user.UserAccountAlreadyExistException;
+import com.taytelar.exception.user.UserAccountNotExistException;
 import com.taytelar.exception.user.UserDetailsMissMatchException;
 import com.taytelar.exception.user.UserNotFoundException;
 import com.taytelar.response.ErrorResponse;
@@ -60,6 +61,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAccountAlreadyExistException.class)
     public ResponseEntity<ErrorResponse> handleUserAccountAlreadyExistException(UserAccountAlreadyExistException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @ExceptionHandler(UserAccountNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleUserAccountNotExistException(UserAccountNotExistException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 

@@ -4,11 +4,15 @@ import com.taytelar.entity.affiliate.AffiliateUserEntity;
 import com.taytelar.entity.otp.OTPEntity;
 import com.taytelar.entity.user.UserEntity;
 import com.taytelar.exception.otp.OtpNotFoundException;
+import com.taytelar.exception.otp.UnknownUserTypeException;
+import com.taytelar.exception.user.UserAccountNotExistException;
 import com.taytelar.exception.user.UserDetailsMissMatchException;
 import com.taytelar.repository.AffiliateUserRepository;
 import com.taytelar.repository.OTPRepository;
 import com.taytelar.repository.UserRepository;
+import com.taytelar.request.user.LoginRequest;
 import com.taytelar.request.user.UserRequest;
+import com.taytelar.response.user.LoginResponse;
 import com.taytelar.response.user.RegisterResponse;
 import com.taytelar.service.service.user.UserService;
 import com.taytelar.util.Constants;
@@ -56,6 +60,7 @@ public class UserServiceImplementation implements UserService {
                 user.setUserType(userRequest.getUserType());
                 user.setEmailAddress(userRequest.getEmailAddress());
                 user.setPhoneNumber(userRequest.getPhoneNumber());
+                user.setPhoneNumberVerified(otpEntity.isOtpVerified());
                 user.setReferralCode(generator.referralCode());
                 user.setReferredReferralCode(referredReferralCode);
                 userRepository.save(user);
@@ -75,6 +80,7 @@ public class UserServiceImplementation implements UserService {
                 affiliateUserEntity.setLastName(userRequest.getLastName());
                 affiliateUserEntity.setEmailAddress(userRequest.getEmailAddress());
                 affiliateUserEntity.setPhoneNumber(userRequest.getPhoneNumber());
+                affiliateUserEntity.setPhoneNumberVerified(otpEntity.isOtpVerified());
                 affiliateUserEntity.setReferralCode(generator.referralCode());
                 affiliateUserEntity.setReferredReferralCode(referredReferralCode);
                 affiliateUserRepository.save(affiliateUserEntity);
@@ -87,6 +93,41 @@ public class UserServiceImplementation implements UserService {
                 throw new UserDetailsMissMatchException(Constants.USER_DETAILS_MISS_MATCH + Constants.OTP_NOT_VERIFIED);
             }
         }
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        LoginResponse loginResponse = new LoginResponse();
+        if (loginRequest.getRequestType().equalsIgnoreCase(Constants.LOGIN) && loginRequest.getUserType().equalsIgnoreCase(Constants.CUSTOMER)) {
+            UserEntity userEntity = userRepository.findUserByPhoneNumber(loginRequest.getPhoneNumber());
+            if (userEntity != null && userEntity.isPhoneNumberVerified()) {
+                loginResponse.setId(userEntity.getUserId());
+                loginResponse.setFirstName(userEntity.getFirstName());
+                loginResponse.setLastName(userEntity.getLastName());
+                loginResponse.setEmailAddress(userEntity.getEmailAddress());
+                loginResponse.setPhoneNumber(userEntity.getPhoneNumber());
+                loginResponse.setReferralCode(userEntity.getReferralCode());
+                loginResponse.setPhoneNumberVerified(userEntity.isPhoneNumberVerified());
+            } else {
+                throw new UserAccountNotExistException(Constants.USER_ACCOUNT_NOT_EXIST);
+            }
+        } else if (loginRequest.getRequestType().equalsIgnoreCase(Constants.LOGIN) && loginRequest.getUserType().equalsIgnoreCase(Constants.AFFILIATE)) {
+            AffiliateUserEntity affiliateUser = affiliateUserRepository.findUserByPhoneNumber(loginRequest.getPhoneNumber());
+            if (affiliateUser != null && affiliateUser.isPhoneNumberVerified()) {
+                loginResponse.setId(affiliateUser.getAffiliateUserId());
+                loginResponse.setFirstName(affiliateUser.getFirstName());
+                loginResponse.setLastName(affiliateUser.getLastName());
+                loginResponse.setEmailAddress(affiliateUser.getEmailAddress());
+                loginResponse.setPhoneNumber(affiliateUser.getPhoneNumber());
+                loginResponse.setReferralCode(affiliateUser.getReferralCode());
+                loginResponse.setPhoneNumberVerified(affiliateUser.isPhoneNumberVerified());
+            } else {
+                throw new UserAccountNotExistException(Constants.AFFILIATE_USER_ACCOUNT_NOT_EXIST);
+            }
+        } else {
+            throw new UnknownUserTypeException(Constants.UNKNOWN_USER_TYPE);
+        }
+        return loginResponse;
     }
 
     private String checkReferralCode(String referralCode) {

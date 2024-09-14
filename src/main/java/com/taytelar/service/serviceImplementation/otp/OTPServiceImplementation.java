@@ -5,12 +5,13 @@ import com.taytelar.entity.otp.OTPEntity;
 import com.taytelar.entity.user.UserEntity;
 import com.taytelar.exception.otp.UnknownUserTypeException;
 import com.taytelar.exception.user.UserAccountAlreadyExistException;
+import com.taytelar.exception.user.UserAccountNotExistException;
 import com.taytelar.repository.AffiliateUserRepository;
 import com.taytelar.repository.OTPRepository;
 import com.taytelar.repository.UserRepository;
-import com.taytelar.request.user.OTPRequest;
-import com.taytelar.request.user.ValidateOTP;
-import com.taytelar.response.user.OTPResponse;
+import com.taytelar.request.otp.OTPRequest;
+import com.taytelar.request.otp.ValidateOTP;
+import com.taytelar.response.otp.OTPResponse;
 import com.taytelar.service.service.otp.OTPService;
 import com.taytelar.util.Constants;
 import lombok.RequiredArgsConstructor;
@@ -52,12 +53,12 @@ public class OTPServiceImplementation implements OTPService {
             if (otpRequest.getUserType().equalsIgnoreCase(Constants.CUSTOMER)) {
                 UserEntity userEntity = userRepository.findUserByPhoneNumber(otpRequest.getPhoneNumber());
                 if (userEntity == null) {
-                    throw new UserAccountAlreadyExistException(Constants.USER_ACCOUNT_NOT_EXIST);
+                    throw new UserAccountNotExistException(Constants.USER_ACCOUNT_NOT_EXIST);
                 }
             } else {
                 AffiliateUserEntity affiliateUser = affiliateUserRepository.findUserByPhoneNumber(otpRequest.getPhoneNumber());
                 if (affiliateUser == null) {
-                    throw new UserAccountAlreadyExistException(Constants.AFFILIATE_USER_ACCOUNT_NOT_EXIST);
+                    throw new UserAccountNotExistException(Constants.AFFILIATE_USER_ACCOUNT_NOT_EXIST);
                 }
             }
         } else if (otpRequest.getRequestType().equalsIgnoreCase(Constants.REGISTER)) {

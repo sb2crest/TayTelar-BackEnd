@@ -1,8 +1,8 @@
 package com.taytelar.controller;
 
-import com.taytelar.request.user.OTPRequest;
-import com.taytelar.request.user.ValidateOTP;
-import com.taytelar.response.user.OTPResponse;
+import com.taytelar.request.otp.OTPRequest;
+import com.taytelar.request.otp.ValidateOTP;
+import com.taytelar.response.otp.OTPResponse;
 import com.taytelar.service.service.otp.OTPService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

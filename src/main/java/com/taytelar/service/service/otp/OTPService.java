@@ -1,8 +1,8 @@
 package com.taytelar.service.service.otp;
 
-import com.taytelar.request.user.OTPRequest;
-import com.taytelar.request.user.ValidateOTP;
-import com.taytelar.response.user.OTPResponse;
+import com.taytelar.request.otp.OTPRequest;
+import com.taytelar.request.otp.ValidateOTP;
+import com.taytelar.response.otp.OTPResponse;
 
 public interface OTPService {
     OTPResponse verifyOtp(ValidateOTP validateOTP);

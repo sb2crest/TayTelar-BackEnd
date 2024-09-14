@@ -1,4 +1,4 @@
-package com.taytelar.response.user;
+package com.taytelar.response.otp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
