@@ -19,6 +19,7 @@ import com.taytelar.util.Constants;
 import com.taytelar.util.Generator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -52,7 +53,8 @@ public class UserServiceImplementation implements UserService {
         }
 
         if (userRequest.getUserType().equalsIgnoreCase(Constants.CUSTOMER)) {
-            if (otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+            UserEntity userEntity = userRepository.findUserByPhoneNumber(userRequest.getPhoneNumber());
+            if (userEntity ==  null && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
                 UserEntity user = new UserEntity();
                 user.setUserId(generator.generateId(Constants.USER_ID));
                 user.setFirstName(userRequest.getFirstName());
@@ -67,13 +69,16 @@ public class UserServiceImplementation implements UserService {
 
                 RegisterResponse registerResponse = new RegisterResponse();
                 registerResponse.setId(user.getUserId());
+                registerResponse.setPhoneNumber(user.getPhoneNumber());
                 registerResponse.setMessage(Constants.REGISTER_SUCCESS);
+                registerResponse.setStatusCode(HttpStatus.OK.value());
                 return registerResponse;
             } else {
                 throw new UserDetailsMissMatchException(Constants.USER_DETAILS_MISS_MATCH + Constants.OTP_NOT_VERIFIED);
             }
         } else {
-            if (otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+            AffiliateUserEntity affiliateUser = affiliateUserRepository.findUserByPhoneNumber(userRequest.getPhoneNumber());
+            if (affiliateUser == null && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
                 AffiliateUserEntity affiliateUserEntity = new AffiliateUserEntity();
                 affiliateUserEntity.setAffiliateUserId(generator.generateId(Constants.AFFILIATE_USER_ID));
                 affiliateUserEntity.setFirstName(userRequest.getFirstName());
@@ -87,7 +92,9 @@ public class UserServiceImplementation implements UserService {
 
                 RegisterResponse registerResponse = new RegisterResponse();
                 registerResponse.setId(affiliateUserEntity.getAffiliateUserId());
+                registerResponse.setPhoneNumber(affiliateUserEntity.getPhoneNumber());
                 registerResponse.setMessage(Constants.REGISTER_SUCCESS);
+                registerResponse.setStatusCode(HttpStatus.OK.value());
                 return registerResponse;
             } else {
                 throw new UserDetailsMissMatchException(Constants.USER_DETAILS_MISS_MATCH + Constants.OTP_NOT_VERIFIED);
