@@ -11,5 +11,5 @@ public interface PaymentService {
 
     PaymentResponse createPayment(PaymentRequest paymentRequest) throws RazorpayException;
 
-    ResponseEntity<SuccessResponse> verifyRazorpaySignature(PaymentData paymentData);
+    SuccessResponse verifyRazorpaySignature(PaymentData paymentData);
 }

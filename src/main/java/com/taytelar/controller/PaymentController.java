@@ -32,7 +32,8 @@ public class PaymentController {
      */
     @PostMapping("/createPayment")
     public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody PaymentRequest paymentRequest) throws RazorpayException {
-        return new ResponseEntity<>(paymentService.createPayment(paymentRequest), HttpStatus.OK);
+        PaymentResponse paymentResponse = paymentService.createPayment(paymentRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
     }
 
 
@@ -48,7 +49,8 @@ public class PaymentController {
      */
     @PostMapping("/verifySignature")
     public ResponseEntity<SuccessResponse> verifySignature(@Valid @RequestBody PaymentData paymentData) {
-        return paymentService.verifyRazorpaySignature(paymentData);
+        SuccessResponse successResponse = paymentService.verifyRazorpaySignature(paymentData);
+        return ResponseEntity.status(HttpStatus.OK).body(successResponse);
     }
 
 }

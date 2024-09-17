@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "affiliate_user_data")
@@ -33,6 +34,9 @@ public class AffiliateUserEntity {
     @Field(name = "email_address")
     private String emailAddress;
 
+    @Field(name = "email_address_verified")
+    private boolean emailAddressVerified;
+
     @Field(name = "phone_number")
     private String phoneNumber;
 
@@ -45,6 +49,11 @@ public class AffiliateUserEntity {
     @Field(name = "referred_referral_code")
     private String referredReferralCode;
 
+    @Field(name = "authentication_source")
+    private String authenticationSource;
+
+    @Field(name = "user_created_at")
+    private LocalDateTime userCreatedAt;
 
     @Field(name = "source_entity")
     private List<SourceEntity> sourceEntities;

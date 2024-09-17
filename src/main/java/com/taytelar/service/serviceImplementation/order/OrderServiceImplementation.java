@@ -3,6 +3,7 @@ package com.taytelar.service.serviceImplementation.order;
 import com.taytelar.entity.order.OrderEntity;
 import com.taytelar.entity.order.OrderItemEntity;
 import com.taytelar.entity.user.UserEntity;
+import com.taytelar.enums.DeliveryStatus;
 import com.taytelar.enums.OrderStatus;
 import com.taytelar.exception.user.UserNotFoundException;
 import com.taytelar.repository.OrderItemRepository;
@@ -39,7 +40,7 @@ public class OrderServiceImplementation implements OrderService {
     @Override
     public PlaceAnOrderResponse placeAnOrder(OrderRequest orderRequest) {
         try {
-
+            log.info("Place an order request: {}", orderRequest);
             UserEntity userEntity = userRepository.findUserByUserId(orderRequest.getUserId());
             if (userEntity == null) {
                 throw new UserNotFoundException(Constants.USER_NOT_FOUND);
@@ -47,20 +48,22 @@ public class OrderServiceImplementation implements OrderService {
 
             OrderEntity orderEntity = getNewOrderEntity(orderRequest, userEntity);
             orderRepository.save(orderEntity);
+            log.info("Order created: {}", orderEntity);
 
             List<OrderItemEntity> orderItems = getNewOrderItemEntities(orderRequest.getOrderItemRequests(), orderEntity);
             orderItemRepository.saveAll(orderItems);
+            log.info("Order items created: {}", orderItems);
 
             PlaceAnOrderResponse placeAnOrderResponse = new PlaceAnOrderResponse();
             placeAnOrderResponse.setMessage(Constants.ORDER_PLACED_SUCCESSFULLY);
             placeAnOrderResponse.setOrderId(orderEntity.getOrderId());
 
+            log.info("Place an order Response: {}", placeAnOrderResponse);
             return placeAnOrderResponse;
-
         } catch (UserNotFoundException e) {
             log.error(Constants.USER_NOT_FOUND + ": {}", e.getMessage());
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("OrderServiceImplementation, PlaceAnOrder, Exception: {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
@@ -88,6 +91,8 @@ public class OrderServiceImplementation implements OrderService {
         orderEntity.setOrderDate(LocalDateTime.now());
         orderEntity.setTotalAmount(orderRequest.getTotalAmount());
         orderEntity.setOrderStatus(OrderStatus.PENDING);
+        orderEntity.setDeliveryStatus(DeliveryStatus.ORDER_CONFIRMED);
+        orderEntity.setPaymentMethod(orderRequest.getPaymentMethod());
         orderEntity.setUserEntity(userEntity);
         return orderEntity;
     }

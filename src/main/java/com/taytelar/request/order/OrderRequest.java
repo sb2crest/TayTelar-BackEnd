@@ -18,11 +18,12 @@ public class OrderRequest {
     @Positive(message = "Total amount must be positive")
     private Double totalAmount;
 
+    @NotBlank(message = "payment method cannot be null")
+    private String paymentMethod;
+
     @NotNull(message = "Order items cannot be null")
     @Valid
     private List<OrderItemRequest> orderItemRequests;
 
-    @NotBlank(message = "payment method cannot be null")
-    private String paymentMethod;
 
 }

@@ -1,5 +1,6 @@
 package com.taytelar.util;
 
+import com.taytelar.exception.otp.UnknownUserTypeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -31,5 +32,15 @@ public class Generator {
         byte[] uuidBytes = uuid.toString().getBytes(StandardCharsets.UTF_8);
         String base64EncodedUUID = Base64.getUrlEncoder().withoutPadding().encodeToString(uuidBytes);
         return base64EncodedUUID.substring(0, 6).toUpperCase();
+    }
+
+    public String createAuthenticationSource(String userType) {
+        return switch (userType) {
+            case Constants.CUSTOMER, Constants.AFFILIATE -> Constants.NORMAL_AUTHENTICATION;
+            case Constants.GOOGLE -> Constants.GOOGLE_AUTHENTICATION;
+            case Constants.FACEBOOK -> Constants.FACEBOOK_AUTHENTICATION;
+            case Constants.APPLE -> Constants.APPLE_AUTHENTICATION;
+            default -> throw new UnknownUserTypeException(Constants.UNKNOWN_USER_TYPE + userType);
+        };
     }
 }

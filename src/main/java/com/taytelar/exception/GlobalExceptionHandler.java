@@ -5,10 +5,7 @@ import com.taytelar.exception.cart.CartItemNotFoundException;
 import com.taytelar.exception.order.OrderNotFoundException;
 import com.taytelar.exception.otp.OtpNotFoundException;
 import com.taytelar.exception.otp.UnknownUserTypeException;
-import com.taytelar.exception.user.UserAccountAlreadyExistException;
-import com.taytelar.exception.user.UserAccountNotExistException;
-import com.taytelar.exception.user.UserDetailsMissMatchException;
-import com.taytelar.exception.user.UserNotFoundException;
+import com.taytelar.exception.user.*;
 import com.taytelar.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +63,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAccountNotExistException.class)
     public ResponseEntity<ErrorResponse> handleUserAccountNotExistException(UserAccountNotExistException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+    }
+
+    @ExceptionHandler(AddressAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAddressAlreadyExistsException(AddressAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAddressNotFoundException(AddressNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

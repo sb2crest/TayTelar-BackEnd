@@ -26,7 +26,7 @@ public class UserRequest {
     private String phoneNumber;
 
     @NotBlank(message = "User Type cannot be null or empty")
-    @Pattern(regexp = "customer|affiliate", message = "User Type must be either 'customer' or 'affiliate'")
+    @Pattern(regexp = "customer|affiliate|admin", message = "User Type must be either 'customer' or 'affiliate' or 'admin'")
     private String userType;
 
     @Pattern(regexp = "^$|^[A-Z0-9]{6}$", message = "Referral code must be 6 uppercase alphanumeric characters or empty")

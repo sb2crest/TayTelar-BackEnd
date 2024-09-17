@@ -2,6 +2,13 @@ package com.taytelar.util;
 
 public class Constants {
     public static final int RETURN_DAYS_POLICY = 7;
+    public static final String NORMAL_AUTHENTICATION = "Normal Registration";
+    public static final String GOOGLE_AUTHENTICATION = "Google Registration";
+    public static final String FACEBOOK_AUTHENTICATION = "Facebook Registration";
+    public static final String APPLE_AUTHENTICATION = "Apple iOS Registration";
+    public static final String GOOGLE = "google";
+    public static final String FACEBOOK = "facebook";
+    public static final String APPLE = "apple";
     public static final String LOGIN = "login";
     public static final String REGISTER = "Register";
     public static final String CUSTOMER = "customer";
@@ -41,5 +48,9 @@ public class Constants {
     public static final String UNKNOWN_USER_TYPE = "The provided user type from request is invalid";
     public static final String USER_ACCOUNT_NOT_EXIST = "Customer account not exist";
     public static final String AFFILIATE_USER_ACCOUNT_NOT_EXIST = "Affiliate user account not exist";
-
+    public static final String ADDRESS_ALREADY_EXIST = "Address already exists";
+    public static final String ADDRESS_ADDED_SUCCESSFULLY = "Address added successfully";
+    public static final String ADDRESS_UPDATED_SUCCESSFULLY = "Address updated successfully";
+    public static final String ADDRESS_NOT_FOUND = "Address not found";
+    public static final String ADDRESS_DELETED_SUCCESSFULLY = "Address deleted successfully";
 }

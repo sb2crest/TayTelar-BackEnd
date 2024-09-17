@@ -16,6 +16,7 @@ import com.taytelar.service.service.otp.OTPService;
 import com.taytelar.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class OTPServiceImplementation implements OTPService {
     private String apiKey;
     @Value("${sms.url}")
     private String smsUrl;
+    private Logger lo;
 
 
     @Override
@@ -80,6 +82,8 @@ public class OTPServiceImplementation implements OTPService {
 
         OTPResponse otpResponse = new OTPResponse();
         String otp = generateRandomOTP();
+
+        log.info("Generated OTP : {}", otp);
         String apiUrl = smsUrl + apiKey +
                 VARIABLE_VALUES + otp +
                 ROUTE_NUMBERS + otpRequest.getPhoneNumber();
@@ -90,6 +94,7 @@ public class OTPServiceImplementation implements OTPService {
 
         try {
             boolean success = sendOtp(apiUrl);
+            log.info("Send OTP success or failed: {}", success);
             if (success) {
                 saveOTPToDB(otpRequest, otp);
                 otpResponse.setMessage(Constants.OTP_SUCCESS);
@@ -98,6 +103,8 @@ public class OTPServiceImplementation implements OTPService {
                 otpResponse.setMessage(Constants.OTP_FAILED);
                 otpResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
+
+            log.info("OTP response: {}", otpResponse);
             return otpResponse;
         } catch (Exception e) {
             log.info("exception :" + e.getMessage());
@@ -112,6 +119,7 @@ public class OTPServiceImplementation implements OTPService {
         OTPEntity otpEntity = otpRepository.findByPhoneNumber(validateOTP.getPhoneNumber());
         List<String> types = Arrays.stream(otpEntity.getUserType().split(",")).toList();
         boolean userType = types.contains(validateOTP.getUserType());
+        log.info("User Type : {} ", userType);
 
         if (otpEntity.getOtpCode().equals(validateOTP.getOtpPassword()) && userType) {
             otpEntity.setOtpVerified(true);
@@ -130,18 +138,18 @@ public class OTPServiceImplementation implements OTPService {
             otpEntity.setOtpCode(otp);
             otpEntity.setOtpVerified(false);
             otpEntity.setUserType(otpRequest.getUserType());
+
+            log.info("OTP entity: {}", otpEntity);
             otpRepository.save(otpEntity);
         } else {
             entity.setOtpCode(otp);
             entity.setOtpVerified(false);
-            if (otpRequest.getUserType().equalsIgnoreCase(Constants.CUSTOMER) && entity.getUserType().equalsIgnoreCase(Constants.CUSTOMER)) {
-                entity.setUserType(otpRequest.getUserType());
-            } else if (entity.getUserType().equalsIgnoreCase(Constants.AFFILIATE) && otpRequest.getUserType().equalsIgnoreCase(Constants.AFFILIATE)) {
-                entity.setUserType(otpRequest.getUserType());
-            } else {
+
+            List<String> userTypes = Arrays.asList(entity.getUserType().split(","));
+            if (!userTypes.contains(otpRequest.getUserType())) {
                 entity.setUserType(entity.getUserType() + "," + otpRequest.getUserType());
             }
-
+            log.info("Updated OTP entity: {}", entity);
             otpRepository.save(entity);
         }
     }
@@ -152,6 +160,7 @@ public class OTPServiceImplementation implements OTPService {
         connection.setRequestMethod("GET");
 
         int responseCode = connection.getResponseCode();
+        log.info("Response code while sending OTP: {}", responseCode);
         return responseCode == 200;
     }
 
@@ -169,6 +178,8 @@ public class OTPServiceImplementation implements OTPService {
         OTPResponse otpResponse = new OTPResponse();
         otpResponse.setMessage(Constants.OTP_VERIFIED_SUCCESSFULLY);
         otpResponse.setStatusCode(HttpStatus.OK.value());
+
+        log.info("OTP Success Response {}", otpResponse);
         return otpResponse;
     }
 
@@ -176,6 +187,8 @@ public class OTPServiceImplementation implements OTPService {
         OTPResponse otpResponse = new OTPResponse();
         otpResponse.setMessage(Constants.OTP_VERIFIED_FAILED);
         otpResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+
+        log.info("OTP Failed Response {}", otpResponse);
         return otpResponse;
     }
 }

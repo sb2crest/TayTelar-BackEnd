@@ -7,6 +7,7 @@ import lombok.*;
 @Table(name = "orders_item_data")
 @Setter
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderItemEntity {
@@ -30,7 +31,8 @@ public class OrderItemEntity {
     @Column(name = "return_days_policy", nullable = false)
     private int returnDaysPolicy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id",nullable = false)
+    @ToString.Exclude
     private OrderEntity orderEntity;
 }
