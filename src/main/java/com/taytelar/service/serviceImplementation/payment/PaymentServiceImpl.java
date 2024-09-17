@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -47,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderRepository orderRepository;
 
     private final Generator generator;
-
+    private final static String ALGORITHM = "HmacSHA256";
     @Value("${razorpay.api.key.id}")
     private String keyID;
 
@@ -59,6 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPayment(PaymentRequest paymentRequest) {
+        log.info("Create payment request: " + paymentRequest);
         PaymentResponse response = new PaymentResponse();
 
         UserEntity userEntity = userRepository.findUserByUserId(paymentRequest.getUserId());
@@ -73,7 +73,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (paymentRequest.getPaymentMethod().equalsIgnoreCase(Constants.COD)) {
 
-
             PaymentEntity paymentEntity = new PaymentEntity();
             // payment id is for us reference
             paymentEntity.setPaymentId(generator.generateId(Constants.PAYMENT_ID));
@@ -84,10 +83,10 @@ public class PaymentServiceImpl implements PaymentService {
             paymentEntity.setPaymentStatus(PaymentStatus.PENDING);
             paymentEntity.setOrderEntity(orderEntity);
             paymentRepository.save(paymentEntity);
+            log.info("Payment Entity {}", paymentRequest);
 
             response.setStatus(Constants.SUCCESS);
             response.setMessage(Constants.ORDER_PLACED_SUCCESSFULLY);
-            response.setPaymentDate(localDateFormat.format(paymentEntity.getPaymentDate()));
         } else {
 
             try {
@@ -100,7 +99,9 @@ public class PaymentServiceImpl implements PaymentService {
                 orderRequest.put("receipt", "payment_receipt_" + System.currentTimeMillis());
 
                 Order razorpayOrder = razorPayClient.orders.create(orderRequest);
+                log.info("RazorPay Order : {}",razorpayOrder);
                 String razorpayOrderId = razorpayOrder.get("id");
+                log.info("RazorPay Order Id : {}", razorpayOrderId);
 
                 PaymentEntity paymentEntity = new PaymentEntity();
                 // payment id is for us reference
@@ -112,6 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentEntity.setPaymentMethod(paymentRequest.getPaymentMethod());
                 paymentEntity.setPaymentStatus(PaymentStatus.PENDING);
                 paymentRepository.save(paymentEntity);
+                log.info("Payment Entity {}", paymentRequest);
 
                 response.setStatus(Constants.SUCCESS);
                 response.setMessage(Constants.PAYMENT_CREATED_SUCCESSFULLY);
@@ -124,15 +126,17 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
+        log.info("Create payment response: {}", response);
         return response;
     }
 
     public String generateRazorpaySignature(String razorPayOrderId, String razorPayPaymentId, String keySecret) {
+        log.info("RazorPayOrderId: {} , RazorPayPaymentId : {}, KeySecret : {}", razorPayOrderId, razorPayPaymentId, keySecret);
         String signature = null;
         try {
             String signatureData = razorPayOrderId + "|" + razorPayPaymentId;
-            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secret_key = new SecretKeySpec(keySecret.getBytes(), "HmacSHA256");
+            Mac sha256_HMAC = Mac.getInstance(ALGORITHM);
+            SecretKeySpec secret_key = new SecretKeySpec(keySecret.getBytes(), ALGORITHM);
             sha256_HMAC.init(secret_key);
 
             byte[] bytes = sha256_HMAC.doFinal(signatureData.getBytes());
@@ -146,13 +150,17 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             log.debug("Exception while generating signature " + e.getMessage());
         }
+        log.info("Generating signature : {}", signature);
         return signature;
     }
 
-    public ResponseEntity<SuccessResponse> verifyRazorpaySignature(PaymentData paymentData) {
+    public SuccessResponse verifyRazorpaySignature(PaymentData paymentData) {
+        log.info("Verify Razorpay signature Request : {}", paymentData);
         String generatedSignature = generateRazorpaySignature(paymentData.getRazorPayOrderId(), paymentData.getRazorPayPaymentId(), keySecret);
         PaymentEntity paymentEntity = paymentRepository.findByRazorPayOrderId(paymentData.getRazorPayOrderId());
+        log.info("PaymentEntity : {}", paymentEntity);
         OrderEntity orderEntity = orderRepository.findByOrderId(paymentData.getOrderId());
+        log.info("OrderEntity : {}", orderEntity);
 
         SuccessResponse successResponse = new SuccessResponse();
         if (generatedSignature != null && generatedSignature.equals(paymentData.getRazorPaySignature())) {
@@ -164,18 +172,21 @@ public class PaymentServiceImpl implements PaymentService {
             paymentEntity.setPaymentStatus(PaymentStatus.SUCCESS);
             paymentEntity.setOrderEntity(orderEntity);
             paymentRepository.save(paymentEntity);
+            log.info("Payment Successful, After payment entity saved : {}",paymentEntity);
 
             successResponse.setMessage(Constants.PAYMENT_SUCCESS);
             successResponse.setStatusCode(HttpStatus.OK.value());
-            return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } else {
             paymentEntity.setRazorPayPaymentId(paymentData.getRazorPayPaymentId());
             paymentEntity.setPaymentStatus(PaymentStatus.FAILED);
+            paymentEntity.setOrderEntity(orderEntity);
             paymentRepository.save(paymentEntity);
+            log.info("Payment failed, After payment entity saved : {}",paymentEntity);
 
             successResponse.setMessage(Constants.PAYMENT_FAILED);
             successResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(successResponse, HttpStatus.PAYMENT_REQUIRED);
         }
+        log.info("Verify RazorPay Signature Response : {}", successResponse);
+        return successResponse;
     }
 }

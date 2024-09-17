@@ -1,4 +1,4 @@
-package com.taytelar.request.user;
+package com.taytelar.request.otp;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+public class OTPRequest {
 
     @NotBlank(message = "Phone Number is mandatory")
     @Pattern(regexp = "\\d{10}", message = "Phone Number must be exactly 10 digits")
@@ -20,6 +20,6 @@ public class LoginRequest {
     private String userType;
 
     @NotBlank(message = "Request Type cannot be null or empty")
-    @Pattern(regexp = "login|Login|LOGIN", message = "Request Type must be 'login'")
+    @Pattern(regexp = "login|register", message = "Request Type must be either 'login' or 'register'")
     private String requestType;
 }

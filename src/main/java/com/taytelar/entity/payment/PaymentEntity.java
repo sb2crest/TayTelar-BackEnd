@@ -3,10 +3,7 @@ package com.taytelar.entity.payment;
 import com.taytelar.entity.order.OrderEntity;
 import com.taytelar.enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "payment_data")
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentEntity {
@@ -44,7 +42,8 @@ public class PaymentEntity {
     @Column(name = "payment_method", nullable =false)
     private String paymentMethod;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @ToString.Exclude
     private OrderEntity orderEntity;
 }
