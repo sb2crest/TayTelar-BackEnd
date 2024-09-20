@@ -31,6 +31,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.Objects.isNull;
 
 
 @Service
@@ -158,7 +161,7 @@ public class UserServiceImplementation implements UserService {
         LoginResponse loginResponse = new LoginResponse();
         if (loginRequest.getUserType().equalsIgnoreCase(Constants.CUSTOMER)) {
             UserEntity userEntity = userRepository.findUserByPhoneNumber(loginRequest.getPhoneNumber());
-            if (userEntity != null && userEntity.isPhoneNumberVerified()) {
+            if (!isNull(userEntity) && userEntity.isPhoneNumberVerified()) {
                 loginResponse.setId(userEntity.getUserId());
                 loginResponse.setFirstName(userEntity.getFirstName());
                 loginResponse.setLastName(userEntity.getLastName());
@@ -179,7 +182,7 @@ public class UserServiceImplementation implements UserService {
         LoginResponse loginResponse = new LoginResponse();
         if (loginRequest.getUserType().equalsIgnoreCase(Constants.AFFILIATE)) {
             AffiliateUserEntity affiliateUser = affiliateUserRepository.findUserByPhoneNumber(loginRequest.getPhoneNumber());
-            if (affiliateUser != null && affiliateUser.isPhoneNumberVerified()) {
+            if (!isNull(affiliateUser) && affiliateUser.isPhoneNumberVerified()) {
                 loginResponse.setId(affiliateUser.getAffiliateUserId());
                 loginResponse.setFirstName(affiliateUser.getFirstName());
                 loginResponse.setLastName(affiliateUser.getLastName());
@@ -199,7 +202,7 @@ public class UserServiceImplementation implements UserService {
         LoginResponse loginResponse = new LoginResponse();
         if (loginRequest.getUserType().equalsIgnoreCase(Constants.ADMIN)) {
             AdminEntity adminEntity = adminRepository.findUserByPhoneNumber(loginRequest.getPhoneNumber());
-            if (adminEntity != null && adminEntity.isPhoneNumberVerified()) {
+            if (!isNull(adminEntity) && adminEntity.isPhoneNumberVerified()) {
                 loginResponse.setId(adminEntity.getAdminId());
                 loginResponse.setFirstName(adminEntity.getFirstName());
                 loginResponse.setLastName(adminEntity.getLastName());
@@ -228,7 +231,7 @@ public class UserServiceImplementation implements UserService {
 
     private OTPEntity getOtpEntity(String phoneNumber) {
         OTPEntity otpEntity = otpRepository.findByPhoneNumber(phoneNumber);
-        if (otpEntity == null) {
+        if (isNull(otpEntity)) {
             throw new OtpNotFoundException(Constants.OTP_ENTITY_NOT_FOUND);
         }
         return otpEntity;
@@ -236,7 +239,7 @@ public class UserServiceImplementation implements UserService {
 
     private RegisterResponse registerCustomer(UserRequest userRequest, OTPEntity otpEntity, String referredReferralCode) {
         UserEntity userEntity = userRepository.findUserByPhoneNumber(userRequest.getPhoneNumber());
-        if (userEntity == null && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+        if (isNull(userEntity) && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
             UserEntity user = createUserEntity(userRequest, otpEntity, referredReferralCode);
             userRepository.save(user);
             log.info("New Registration of customer user: {}", user);
@@ -248,7 +251,7 @@ public class UserServiceImplementation implements UserService {
 
     private RegisterResponse registerAffiliate(UserRequest userRequest, OTPEntity otpEntity, String referredReferralCode) {
         AffiliateUserEntity affiliateUser = affiliateUserRepository.findUserByPhoneNumber(userRequest.getPhoneNumber());
-        if (affiliateUser == null && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+        if (isNull(affiliateUser) && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
             AffiliateUserEntity affiliateUserEntity = createAffiliateUserEntity(userRequest, otpEntity, referredReferralCode);
             affiliateUserRepository.save(affiliateUserEntity);
             log.info("New Registration of affiliate user: {}", affiliateUserEntity);
@@ -260,7 +263,7 @@ public class UserServiceImplementation implements UserService {
 
     private RegisterResponse registerAdmin(UserRequest userRequest, OTPEntity otpEntity, String referredReferralCode) {
         AdminEntity adminEntity = adminRepository.findUserByPhoneNumber(userRequest.getPhoneNumber());
-        if (adminEntity == null && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
+        if (isNull(adminEntity) && otpEntity.isOtpVerified() && otpEntity.getPhoneNumber().equals(userRequest.getPhoneNumber())) {
             AdminEntity admin = createAdminEntity(userRequest, otpEntity, referredReferralCode);
             adminRepository.save(admin);
             log.info("New Registration of admin user: {}", admin);
@@ -350,22 +353,19 @@ public class UserServiceImplementation implements UserService {
     }
 
     private String checkReferralCode(String referralCode) {
-        UserEntity userEntity = userRepository.findByReferralCode(referralCode);
-        if (userEntity != null) {
-            return userEntity.getReferralCode();
+        Optional<UserEntity> userEntity = userRepository.findByReferralCode(referralCode);
+        if (userEntity.isPresent()) {
+            return userEntity.get().getReferralCode();
         }
 
-        AffiliateUserEntity affiliateUser = affiliateUserRepository.findByReferralCode(referralCode);
-        if (affiliateUser != null) {
-            return affiliateUser.getReferralCode();
+        Optional<AffiliateUserEntity> affiliateUser = affiliateUserRepository.findByReferralCode(referralCode);
+        if (affiliateUser.isPresent()) {
+            return affiliateUser.get().getReferralCode();
         }
 
-        AdminEntity adminEntity = adminRepository.findByReferralCode(referralCode);
-        if (adminEntity != null) {
-            return adminEntity.getReferralCode();
-        }
+        Optional<AdminEntity> adminEntity = adminRepository.findByReferralCode(referralCode);
+        return adminEntity.map(AdminEntity::getReferralCode).orElse(null);
 
-        return null;
     }
 
     private RegisterResponse createRegistrationResponse(String userId, String phoneNumber) {
@@ -379,14 +379,14 @@ public class UserServiceImplementation implements UserService {
     }
 
     private void validateUser(UserEntity userEntity, String userId) {
-        if (userEntity == null) {
+        if (isNull(userEntity)) {
             log.info("Exception : {} {}", Constants.USER_NOT_FOUND, userId);
             throw new UserNotFoundException(Constants.USER_NOT_FOUND);
         }
     }
 
     private void validateAddress(AddressEntity addressEntity, Long addressId) {
-        if (addressEntity == null) {
+        if (isNull(addressEntity)) {
             log.info("Exception : {} {}", Constants.ADDRESS_NOT_FOUND, addressId);
             throw new AddressNotFoundException(Constants.ADDRESS_NOT_FOUND);
         }

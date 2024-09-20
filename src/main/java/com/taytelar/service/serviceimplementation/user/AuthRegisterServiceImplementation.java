@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import static java.util.Objects.isNull;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -46,16 +48,17 @@ public class AuthRegisterServiceImplementation implements AuthRegisterService {
 
     private LoginResponse handleCustomerRegisterAndLogin(AuthRegisterRequest request) {
         UserEntity userEntity = userRepository.findByEmailAddress(request.getEmailAddress());
-        if (userEntity == null) {
+        if (isNull(userEntity)) {
             userEntity = new UserEntity();
             userEntity.setUserId(generator.generateId(Constants.USER_ID));
             userEntity.setFirstName(request.getFirstName());
             userEntity.setLastName(request.getLastName());
-            if((request.getEmailAddress() == null && request.getEmailAddress().isEmpty())){
+            if ((request.getEmailAddress() != null && !request.getEmailAddress().isEmpty())) {
                 userEntity.setEmailAddress(request.getEmailAddress());
                 userEntity.setEmailAddressVerified(true);
+            } else {
+                userEntity.setEmailAddressVerified(false);
             }
-            userEntity.setEmailAddressVerified(false);
             userEntity.setPhoneNumberVerified(false);
             userEntity.setUserType(request.getUserType());
             userEntity.setUserCreatedAt(LocalDateTime.now());
@@ -70,16 +73,17 @@ public class AuthRegisterServiceImplementation implements AuthRegisterService {
 
     private LoginResponse handleAffiliateRegisterAndLogin(AuthRegisterRequest request) {
         AffiliateUserEntity affiliateUser = affiliateUserRepository.findByEmailAddress(request.getEmailAddress());
-        if (affiliateUser == null) {
+        if (isNull(affiliateUser)) {
             affiliateUser = new AffiliateUserEntity();
             affiliateUser.setAffiliateUserId(generator.generateId(Constants.AFFILIATE_USER_ID));
             affiliateUser.setFirstName(request.getFirstName());
             affiliateUser.setLastName(request.getLastName());
-            if((request.getEmailAddress() != null && !request.getEmailAddress().isEmpty())){
+            if ((request.getEmailAddress() != null && !request.getEmailAddress().isEmpty())) {
                 affiliateUser.setEmailAddress(request.getEmailAddress());
                 affiliateUser.setEmailAddressVerified(true);
+            } else {
+                affiliateUser.setEmailAddressVerified(false);
             }
-            affiliateUser.setEmailAddressVerified(false);
             affiliateUser.setPhoneNumberVerified(false);
             affiliateUser.setUserType(request.getUserType());
             affiliateUser.setUserCreatedAt(LocalDateTime.now());
@@ -93,16 +97,17 @@ public class AuthRegisterServiceImplementation implements AuthRegisterService {
 
     private LoginResponse handleAdminRegisterAndLogin(AuthRegisterRequest request) {
         AdminEntity adminEntity = adminRepository.findByEmailAddress(request.getEmailAddress());
-        if (adminEntity == null) {
+        if (isNull(adminEntity)) {
             adminEntity = new AdminEntity();
             adminEntity.setAdminId(generator.generateId(Constants.ADMIN_ID));
             adminEntity.setFirstName(request.getFirstName());
             adminEntity.setLastName(request.getLastName());
-            if((request.getEmailAddress() != null && !request.getEmailAddress().isEmpty())){
+            if ((request.getEmailAddress() != null && !request.getEmailAddress().isEmpty())) {
                 adminEntity.setEmailAddress(request.getEmailAddress());
                 adminEntity.setEmailAddressVerified(true);
+            } else {
+                adminEntity.setEmailAddressVerified(false);
             }
-            adminEntity.setEmailAddressVerified(false);
             adminEntity.setPhoneNumberVerified(false);
             adminEntity.setUserType(request.getUserType());
             adminEntity.setUserCreatedAt(LocalDateTime.now());

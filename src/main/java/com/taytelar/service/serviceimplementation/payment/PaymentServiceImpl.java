@@ -34,6 +34,8 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -62,12 +64,12 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponse response = new PaymentResponse();
 
         UserEntity userEntity = userRepository.findUserByUserId(paymentRequest.getUserId());
-        if (userEntity == null) {
+        if (isNull(userEntity)) {
             throw new UserNotFoundException(Constants.USER_NOT_FOUND);
         }
 
         OrderEntity orderEntity = orderRepository.findByOrderId(paymentRequest.getOrderId());
-        if (orderEntity == null) {
+        if (isNull(orderEntity)) {
             throw new OrderNotFoundException(Constants.ORDER_NOT_FOUND);
         }
 

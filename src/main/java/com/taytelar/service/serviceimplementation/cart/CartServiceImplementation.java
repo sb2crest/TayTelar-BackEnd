@@ -18,7 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class CartServiceImplementation implements CartService {
 
         CartEntity cartEntity = cartRepository.findByUserId(cartRequest.getUserId());
 
-        if (cartEntity == null) {
+        if (isNull(cartEntity)) {
             CartEntity cart = new CartEntity();
             cart.setCartId(generator.generateId(Constants.CART_ID));
             cart.setUserId(cartRequest.getUserId());
@@ -56,7 +57,7 @@ public class CartServiceImplementation implements CartService {
 
         CartEntity cartEntity = cartRepository.findByUserId(cartRequest.getUserId());
 
-        if (cartEntity != null) {
+        if (!isNull(cartEntity)) {
             List<CartItemEntity> cartItems = cartEntity.getCartItemEntityList();
             for (CartItemRequest cartItemRequest : cartRequest.getCartItemRequests()) {
                 String cartItemId = cartItemRequest.getCartItemId();
@@ -90,7 +91,7 @@ public class CartServiceImplementation implements CartService {
     public SuccessResponse deleteCartItem(CartRequest cartRequest) {
         CartEntity cartEntity = cartRepository.findByUserId(cartRequest.getUserId());
 
-        if (cartEntity != null) {
+        if (!isNull(cartEntity)) {
             List<CartItemEntity> cartItems = cartEntity.getCartItemEntityList();
             for (CartItemRequest cartItemRequest : cartRequest.getCartItemRequests()) {
                 String cartItemId = cartItemRequest.getCartItemId();
@@ -115,7 +116,7 @@ public class CartServiceImplementation implements CartService {
     public CartResponse getCartItems(String userId) {
         CartEntity cartEntity = cartRepository.findByUserId(userId);
 
-        if(cartEntity != null) {
+        if(!isNull(cartEntity)) {
             CartResponse cartResponse = new CartResponse();
             cartResponse.setUserId(cartEntity.getUserId());
             cartResponse.setCartId(cartEntity.getCartId());

@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -42,7 +44,7 @@ public class OrderServiceImplementation implements OrderService {
         try {
             log.info("Place an order request: {}", orderRequest);
             UserEntity userEntity = userRepository.findUserByUserId(orderRequest.getUserId());
-            if (userEntity == null) {
+            if (isNull(userEntity)) {
                 throw new UserNotFoundException(Constants.USER_NOT_FOUND);
             }
 

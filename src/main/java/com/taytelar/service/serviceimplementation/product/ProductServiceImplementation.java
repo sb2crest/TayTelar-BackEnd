@@ -29,10 +29,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -98,30 +95,40 @@ public class ProductServiceImplementation implements ProductService {
 
 
     private Category getOrCreateCategory(String categoryName, String categoryDescription) {
-        Category category = categoryRepository.findByCategoryName(categoryName);
-        if (category == null) {
-            category = new Category();
-            category.setCategoryId(generator.generateId(Constants.CATEGORY_ID));
-            category.setCategoryName(categoryName);
-            category.setCategoryDescription(categoryDescription);
-            categoryRepository.save(category);
+        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryName);
+
+        if (optionalCategory.isPresent()) {
+            Category category = optionalCategory.get();
+            log.info("Category already exists: {}", category);
+            return category;
+        } else {
+            Category newCategory = new Category();
+            newCategory.setCategoryId(generator.generateId(Constants.CATEGORY_ID));
+            newCategory.setCategoryName(categoryName);
+            newCategory.setCategoryDescription(categoryDescription);
+            categoryRepository.save(newCategory);
+            log.info("Created new Category: {}", newCategory);
+            return newCategory;
         }
-        log.info("Category: {}", category);
-        return category;
     }
 
     private SubCategory getOrCreateSubCategory(String subCategoryName, String subCategoryDescription, Category category) {
-        SubCategory subCategory = subCategoryRepository.findBySubCategoryName(subCategoryName);
-        if (subCategory == null) {
-            subCategory = new SubCategory();
-            subCategory.setSubCategoryId(generator.generateId(Constants.SUB_CATEGORY_ID));
-            subCategory.setSubCategoryName(subCategoryName);
-            subCategory.setSubCategoryDescription(subCategoryDescription);
-            subCategory.setCategory(category);
-            subCategoryRepository.save(subCategory);
+        Optional<SubCategory> optionalSubCategory = subCategoryRepository.findBySubCategoryName(subCategoryName);
+        if (optionalSubCategory.isPresent()) {
+            SubCategory subCategory = optionalSubCategory.get();
+            log.info("SubCategory already exist: {}", subCategory);
+            return subCategory;
+
+        } else {
+            SubCategory newSubCategory = new SubCategory();
+            newSubCategory.setSubCategoryId(generator.generateId(Constants.SUB_CATEGORY_ID));
+            newSubCategory.setSubCategoryName(subCategoryName);
+            newSubCategory.setSubCategoryDescription(subCategoryDescription);
+            newSubCategory.setCategory(category);
+            subCategoryRepository.save(newSubCategory);
+            log.info("SubCategory: {}", newSubCategory);
+            return newSubCategory;
         }
-        log.info("SubCategory: {}", subCategory);
-        return subCategory;
     }
 
     private Product createProduct(AddProductRequest request, SubCategory subCategory) {
@@ -174,7 +181,7 @@ public class ProductServiceImplementation implements ProductService {
             String fileUrl = uploadFileToS3(file, "images", productId);
             fileUrls.put(fileUrl, priority);
         }
-
+        log.info("Images URL: {}",fileUrls);
         return fileUrls;
     }
 
@@ -244,7 +251,7 @@ public class ProductServiceImplementation implements ProductService {
                 product.getStockQuantities().stream()
                         .map(stock -> new StockQuantityResponse(
                                 stock.getSize(),
-                                stock.getColorQuantities() // List of ColorQuantity
+                                stock.getColorQuantities()
                                         .stream()
                                         .map(colorQuantity -> new ColorQuantityResponse(
                                                 colorQuantity.getColor(),
