@@ -12,20 +12,19 @@ import java.util.List;
 public class SubCategory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "subCategoryId")
-    private Long subCategoryId;
+    @Column(name = "sub_category_id")
+    private String subCategoryId;
 
-    @Column(name = "subCategoryName")
+    @Column(name = "sub_category_name")
     private String subCategoryName;
 
-    @Column(name = "subCategoryDescription")
+    @Column(name = "sub_category_description")
     private String subCategoryDescription;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId",referencedColumnName = "categoryId")
+    @JoinColumn(name = "category_id",referencedColumnName = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy ="subCategory",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="subCategory",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;
 }

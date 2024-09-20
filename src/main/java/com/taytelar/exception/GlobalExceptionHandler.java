@@ -3,6 +3,7 @@ package com.taytelar.exception;
 import com.taytelar.exception.affiliate.FailedToSendOtpException;
 import com.taytelar.exception.cart.CartItemNotFoundException;
 import com.taytelar.exception.order.OrderNotFoundException;
+import com.taytelar.exception.order.OrderPlacingException;
 import com.taytelar.exception.otp.OtpNotFoundException;
 import com.taytelar.exception.otp.UnknownUserTypeException;
 import com.taytelar.exception.user.*;
@@ -76,11 +77,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
     }
 
+    @ExceptionHandler(OrderPlacingException.class)
+    public ResponseEntity<ErrorResponse> handleOrderPlacingException(OrderPlacingException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);

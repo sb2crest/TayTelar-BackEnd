@@ -1,9 +1,9 @@
 package com.taytelar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taytelar.controller.order.OrderController;
 import com.taytelar.request.order.OrderItemRequest;
 import com.taytelar.request.order.OrderRequest;
-import com.taytelar.response.SuccessResponse;
 import com.taytelar.response.order.PlaceAnOrderResponse;
 import com.taytelar.service.service.order.OrderService;
 import com.taytelar.util.Constants;
@@ -54,7 +54,7 @@ class OrderControllerTest {
         mockMvc.perform(post("/api/order/placeAnOrder")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(orderRequest)))
-                        .andExpect(status().isOk());
+                .andExpect(status().isOk());
 
     }
 
@@ -80,6 +80,7 @@ class OrderControllerTest {
         OrderItemRequest orderItemRequest = new OrderItemRequest();
         orderItemRequest.setProductId("PRODUCT-ID01");
         orderItemRequest.setQuantity(3);
+        orderItemRequest.setColor("Blue");
         orderItemRequest.setTotalAmount(300.00);
         requests.add(orderItemRequest);
 

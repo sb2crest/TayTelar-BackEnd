@@ -1,6 +1,7 @@
 package com.taytelar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taytelar.controller.payment.PaymentController;
 import com.taytelar.request.payment.PaymentRequest;
 import com.taytelar.response.SuccessResponse;
 import com.taytelar.response.payment.PaymentData;

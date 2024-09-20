@@ -17,6 +17,8 @@ public class LoginResponse {
 
     private String emailAddress;
 
+    private boolean emailAddressVerified;
+
     private String phoneNumber;
 
     private boolean phoneNumberVerified;
