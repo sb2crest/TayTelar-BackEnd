@@ -70,6 +70,7 @@ public class CartServiceImplementation implements CartService {
                         cartItem.setProductColor(cartItemRequest.getProductColor());
                         cartItem.setQuantity(cartItemRequest.getQuantity());
                         cartItem.setPrice(cartItemRequest.getPrice());
+                        cartItem.setProductImageUrl(cartItemRequest.getProductImageUrl());
                         break;
                     }
                 }
@@ -141,6 +142,7 @@ public class CartServiceImplementation implements CartService {
                     cartItemResponse.setProductColor(cartItemEntity.getProductColor());
                     cartItemResponse.setQuantity(cartItemEntity.getQuantity());
                     cartItemResponse.setPrice(cartItemEntity.getPrice());
+                    cartItemResponse.setProductImagesUrl(cartItemEntity.getProductImageUrl());
                     return cartItemResponse;
                 })
                 .toList();
@@ -157,6 +159,7 @@ public class CartServiceImplementation implements CartService {
                     itemEntity.setProductColor(cartItemRequest.getProductColor());
                     itemEntity.setQuantity(cartItemRequest.getQuantity());
                     itemEntity.setPrice(cartItemRequest.getPrice());
+                    itemEntity.setProductImageUrl(cartItemRequest.getProductImageUrl());
                     return itemEntity;
                 })
                 .toList();

@@ -33,6 +33,9 @@ public class AddProductRequest {
     @NotBlank(message = "Product name is required")
     private String productName;
 
+    @NotBlank(message = "Product status is required")
+    private String productStatus;
+
     @NotBlank(message = "Product description is required")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String productDescription;

@@ -22,6 +22,9 @@ public class ColorQuantity {
     @Column(name = "color")
     private String color;
 
+    @Column(name = "color_code")
+    private String colorCode;
+
     @Column(name = "quantity")
     private Integer quantity;
 

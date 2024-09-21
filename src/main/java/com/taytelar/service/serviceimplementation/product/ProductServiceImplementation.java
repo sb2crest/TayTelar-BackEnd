@@ -136,6 +136,7 @@ public class ProductServiceImplementation implements ProductService {
         Product product = new Product();
         product.setProductId(generator.generateId(Constants.PRODUCT_ID));
         product.setProductName(request.getProductName());
+        product.setProductStatus(request.getProductStatus());
         product.setProductDescription(request.getProductDescription());
         product.setProductMaterialType(request.getProductMaterialType());
         product.setProductPattern(request.getProductPattern());
@@ -164,6 +165,7 @@ public class ProductServiceImplementation implements ProductService {
             ColorQuantity quantity1 = new ColorQuantity();
             quantity1.setColorQuantityId(generator.generateId(Constants.COLOR_QUANTITY_ID));
             quantity1.setColor(colorQuantity.getColor());
+            quantity1.setColorCode(colorQuantity.getColorCode());
             quantity1.setQuantity(colorQuantity.getQuantity());
             quantity1.setStockQuantity(quantity);
             result.add(quantity1);
@@ -244,6 +246,7 @@ public class ProductServiceImplementation implements ProductService {
         return new ProductDataResponse(
                 product.getProductId(),
                 product.getProductName(),
+                product.getProductStatus(),
                 product.getProductDescription(),
                 product.getProductMaterialType(),
                 product.getProductPattern(),
@@ -255,6 +258,7 @@ public class ProductServiceImplementation implements ProductService {
                                         .stream()
                                         .map(colorQuantity -> new ColorQuantityResponse(
                                                 colorQuantity.getColor(),
+                                                colorQuantity.getColorCode(),
                                                 colorQuantity.getQuantity()
                                         ))
                                         .toList()

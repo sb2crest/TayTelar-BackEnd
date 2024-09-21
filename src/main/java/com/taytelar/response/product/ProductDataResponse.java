@@ -13,6 +13,7 @@ import java.util.Map;
 public class ProductDataResponse {
 
     private String productId;
+    private String productStatus;
     private String productName;
     private String productDescription;
     private String productMaterialType;

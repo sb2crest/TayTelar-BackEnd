@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ColorQuantityResponse {
     private String color;
+    private String colorCode;
     private Integer quantity;
 }

@@ -31,4 +31,7 @@ public class CartItemRequest {
     @NotNull(message = "Price cannot be null")
     @Positive(message = "Price must be positive")
     private Double price;
+
+    @NotNull(message = "Product Image Url cannot be blank")
+    private String productImageUrl;
 }

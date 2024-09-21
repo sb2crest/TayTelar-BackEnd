@@ -30,4 +30,7 @@ public class CartItemEntity {
 
     @Field("price")
     private Double price;
+
+    @Field("product_image")
+    private String productImageUrl;
 }

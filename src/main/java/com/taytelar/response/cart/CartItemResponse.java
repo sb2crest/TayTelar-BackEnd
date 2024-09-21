@@ -12,4 +12,5 @@ public class CartItemResponse {
     private String productColor;
     private Integer quantity;
     private Double price;
+    private String productImagesUrl;
 }
