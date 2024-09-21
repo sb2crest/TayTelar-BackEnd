@@ -24,6 +24,9 @@ public class CartItemRequest {
     @NotBlank(message = "Color cannot be blank")
     private String productColor;
 
+    @NotBlank(message = "Color code cannot be blank")
+    private String productColorCode;
+
     @NotNull(message = "Quantity cannot be null")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
@@ -32,6 +35,4 @@ public class CartItemRequest {
     @Positive(message = "Price must be positive")
     private Double price;
 
-    @NotNull(message = "Product Image Url cannot be blank")
-    private String productImageUrl;
 }

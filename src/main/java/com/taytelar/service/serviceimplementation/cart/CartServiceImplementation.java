@@ -2,8 +2,10 @@ package com.taytelar.service.serviceimplementation.cart;
 
 import com.taytelar.entity.cart.CartEntity;
 import com.taytelar.entity.cart.CartItemEntity;
+import com.taytelar.entity.product.Product;
 import com.taytelar.exception.cart.CartItemNotFoundException;
 import com.taytelar.repository.cart.CartRepository;
+import com.taytelar.repository.product.ProductRepository;
 import com.taytelar.request.cart.CartItemRequest;
 import com.taytelar.request.cart.CartRequest;
 import com.taytelar.response.SuccessResponse;
@@ -18,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
@@ -27,6 +31,7 @@ import static java.util.Objects.isNull;
 public class CartServiceImplementation implements CartService {
 
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
     private final Generator generator;
 
     @Override
@@ -68,9 +73,9 @@ public class CartServiceImplementation implements CartService {
                         cartItem.setProductName(cartItemRequest.getProductName());
                         cartItem.setProductSize(cartItemRequest.getProductSize());
                         cartItem.setProductColor(cartItemRequest.getProductColor());
+                        cartItem.setProductColorCode(cartItemRequest.getProductColorCode());
                         cartItem.setQuantity(cartItemRequest.getQuantity());
                         cartItem.setPrice(cartItemRequest.getPrice());
-                        cartItem.setProductImageUrl(cartItemRequest.getProductImageUrl());
                         break;
                     }
                 }
@@ -140,6 +145,7 @@ public class CartServiceImplementation implements CartService {
                     cartItemResponse.setProductName(cartItemEntity.getProductName());
                     cartItemResponse.setProductSize(cartItemEntity.getProductSize());
                     cartItemResponse.setProductColor(cartItemEntity.getProductColor());
+                    cartItemResponse.setProductColorCode(cartItemEntity.getProductColorCode());
                     cartItemResponse.setQuantity(cartItemEntity.getQuantity());
                     cartItemResponse.setPrice(cartItemEntity.getPrice());
                     cartItemResponse.setProductImagesUrl(cartItemEntity.getProductImageUrl());
@@ -149,6 +155,8 @@ public class CartServiceImplementation implements CartService {
     }
 
     private List<CartItemEntity> getCartItemEntityList(List<CartItemRequest> cartItemRequests) {
+
+
         return cartItemRequests.stream()
                 .map(cartItemRequest -> {
                     CartItemEntity itemEntity = new CartItemEntity();
@@ -157,9 +165,23 @@ public class CartServiceImplementation implements CartService {
                     itemEntity.setProductName(cartItemRequest.getProductName());
                     itemEntity.setProductSize(cartItemRequest.getProductSize());
                     itemEntity.setProductColor(cartItemRequest.getProductColor());
+                    itemEntity.setProductColorCode(cartItemRequest.getProductColorCode());
                     itemEntity.setQuantity(cartItemRequest.getQuantity());
                     itemEntity.setPrice(cartItemRequest.getPrice());
-                    itemEntity.setProductImageUrl(cartItemRequest.getProductImageUrl());
+
+                    Optional<Product> productOptional = productRepository.findByProductId(cartItemRequest.getProductId());
+
+                    if (productOptional.isPresent()) {
+                        Product product = productOptional.get();
+                        String firstImageUrl = product.getImageUrls().entrySet().stream()
+                                .sorted(Map.Entry.comparingByValue())
+                                .map(Map.Entry::getKey)
+                                .findFirst()
+                                .orElse(null);
+
+                        itemEntity.setProductImageUrl(firstImageUrl);
+                    }
+
                     return itemEntity;
                 })
                 .toList();

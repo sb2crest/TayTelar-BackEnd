@@ -25,6 +25,9 @@ public class CartItemEntity {
     @Field("product_color")
     private String productColor;
 
+    @Field("product_color_code")
+    private String productColorCode;
+
     @Field("quantity")
     private Integer quantity;
 

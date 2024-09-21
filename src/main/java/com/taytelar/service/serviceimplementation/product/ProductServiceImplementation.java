@@ -65,10 +65,12 @@ public class ProductServiceImplementation implements ProductService {
 
     @Override
     public SuccessResponse uploadProductFiles(String productId, MultipartFile[] images, Integer[] imagePriorities, MultipartFile video) {
-        Product product = productRepository.findByProductId(productId);
-        if (isNull(product)) {
+        Optional<Product> productOptional = productRepository.findByProductId(productId);
+        if (productOptional.isEmpty()) {
             throw new ProductNotFoundException(Constants.PRODUCT_NOT_FOUND);
         }
+
+        Product product = productOptional.get();
         Map<String, Integer> imageUrls = uploadFilesToS3(imagePriorities, images, productId);
         String videoUrl = uploadFileToS3(video, "video", productId);
         log.info("Image URLs: {} and Video URL: {}", imageUrls, videoUrl);

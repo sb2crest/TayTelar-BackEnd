@@ -10,6 +10,7 @@ public class CartItemResponse {
     private String productName;
     private Integer productSize;
     private String productColor;
+    private String productColorCode;
     private Integer quantity;
     private Double price;
     private String productImagesUrl;
