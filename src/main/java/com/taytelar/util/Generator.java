@@ -19,8 +19,10 @@ public class Generator {
             case Constants.ORDER_ID -> numericUUID.substring(0, 10);
             case Constants.ORDER_ITEM_ID -> numericUUID.substring(0, 8);
             case Constants.PAYMENT_ID -> numericUUID.substring(0, 12);
-            case Constants.USER_ID, Constants.CART_ID, Constants.CART_ITEM_ID, Constants.AFFILIATE_USER_ID ->
-                    numericUUID.substring(0, 6);
+            case Constants.USER_ID, Constants.CART_ID, Constants.CART_ITEM_ID, Constants.AFFILIATE_USER_ID,
+                    Constants.ADMIN_ID-> numericUUID.substring(0, 6);
+            case Constants.CATEGORY_ID, Constants.SUB_CATEGORY_ID, Constants.PRODUCT_ID ,
+                    Constants.STOCK_ID, Constants.COLOR_QUANTITY_ID-> numericUUID.substring(0,4);
             case null, default -> numericUUID;
         };
 

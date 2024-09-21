@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
-import java.math.BigDecimal;
 
 @Data
 public class OrderItemRequest {
@@ -16,6 +15,9 @@ public class OrderItemRequest {
     @NotNull(message = "Quantity cannot be null")
     @Positive(message = "Quantity must be positive")
     private Integer quantity;
+
+    @NotBlank(message = "Color cannot be blank")
+    private String color;
 
     @NotNull(message = "Total amount cannot be null")
     @Positive(message = "Total amount must be positive")
